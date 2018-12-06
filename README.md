@@ -1,12 +1,12 @@
 # 前端总结
 
-作为普云交易前端React版框架搭建者，对相关内容都有过深入的研究。因最近店管家新版功能与普云交易重叠，参考普云交易部分代码，发现一些不规范的内容；结合辅导吴国栋过程中发现的问题，总结一下核心要点分享。
+最近店管家新版功能与普云交易重叠，参考普云交易部分代码，发现一些不规范的内容；结合辅导吴国栋过程中发现的问题，总结一下前端核心要点分享。
 
 希望大家的代码都在符合规范的情况下，基于思路清晰，简单的原则设计。
 
 另：通常最复杂的地方在render方法，建议将render()根据页面结构，分拆成不同的部分，方便自己与他人理清思路。如
-``` 
 
+``` 
 renderHeader(){...}
 renderLeft(){...}
 renderRight(){...}
@@ -44,15 +44,16 @@ render(){
 
 绝对不要使用 `this.state.xxx=newValue; `
 
-### setState的作用
+#### 2.1 setState的作用
 
 通过setState，状态会更改并自动执行render()方法。
-在第一节示例中，因为变量的不规范，额外执行了一遍 `this.setState({inputOrders : this.state.inputOrders})`,原本是毫无意义的代码。 作用仅仅是触发页面render，使之前的未在状态中控制的变量赋值生效。
+在第一节示例中，因为变量的不规范使用，额外执行了一遍 `this.setState({inputOrders : this.state.inputOrders})`,原本是毫无意义的代码。 作用仅仅是触发页面render，使之前的未在状态中控制的变量赋值生效。
 
 ### 3.setState是异步方法
 
 所以setState后如果立即获取state中的内容，可能是旧的内容，导致出现页面总是比逻辑慢一步的情况。
 正确的做法是
+
 ```
 this.setState(
 {
@@ -74,6 +75,7 @@ this.setState(
 1.受控组件,有value属性以及onChange方法。
 value完全控制组件显示内容，
 用户输入时，触发onChange修改value的值，然后页面更新显示用户输入的内容
+
 ```
 <Input
     onChange={ this.onMemoChange.bind(this) }
@@ -82,10 +84,15 @@ value完全控制组件显示内容，
 />
 ```
 2.非受控组件，用户输入时实时更新显示，但是在用时需要取值 `this.refs.a.state.value`
+
+```
 <Input
     ref="a"
 />
+```
+
 3.qnui Field组件。
+
 ```
 class Demo extends React.Component {
     field = new Field(this,{
@@ -112,6 +119,7 @@ class Demo extends React.Component {
 
 ```
 混杂示例
+
 ```$xslt
 case 'input_trade_tid_id':
     this.field.setValue("input_trade_tid_id", value);
@@ -135,12 +143,14 @@ case 'input_trade_tid_id':
 也可以通过<Input value={this.state.name} 控制，这种带value的，就是"受控组件",值完全由value控制。受控组件一般是有个onchange,里面通过setState修改组件值。
 都可以使用，但是不要一起使用
 ### 5.ref引用
+
 ``` 
 <input ref="name"/>
 取值：this.refs.name.value
 赋值：this.refs.name.value='newValue'
 ```
 原始input与qnui Input组件的不同：
+
 ``` 
 <Input ref="qninput"/>
 取值：this.refs.qninput.state.value
@@ -154,6 +164,7 @@ case 'input_trade_tid_id':
 系统中所有样式，都会打包到一个样式文件中。所以任何一个scss样式文件中的顶级样式，会作用于所有页面。
 所以规范是：确定通用的样式放在styles/commons.scss或styles/theme.scss中，其他自己负责的专用组件样式文件定义一个独特的顶级className，所有样式放在该顶级className之下。
 也不要引用样式文件，最初不了解可能存在引用其他样式文件的情况，这是不需要的。
+
 ```
 如：containers/trade/index.scss
 .tradeIndex{
